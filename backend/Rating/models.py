@@ -17,7 +17,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Post')
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='skatepark_image', blank=True, null=True)
-    rating = models.ForeignKey('Rating', on_delete=models.CASCADE)
+    rating = models.ForeignKey('Rating', on_delete=models.CASCADE, related_name='Rating')
     text = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
