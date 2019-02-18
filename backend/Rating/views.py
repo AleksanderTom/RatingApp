@@ -10,8 +10,8 @@ from rest_framework.views import APIView
 
 # posts/
 from Rating.forms import UserForm
-from Rating.models import Post, UserProfile
-from Rating.serializers import PostSerializer, UserSerializer, UserProfileSerializer
+from Rating.models import Post, UserProfile, Comment
+from Rating.serializers import PostSerializer, UserSerializer, UserProfileSerializer, CommentSerializer
 
 
 class UserDetailsList(ListAPIView):
@@ -32,15 +32,22 @@ class UserDetailsList(ListAPIView):
                          })
 
 
-class PostList(APIView):
+class PostList(ListAPIView):
+    serializer_class_Post = PostSerializer
+    serializer_class_Comment = CommentSerializer
 
-    def get(self, request):
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+    def get_queryset_Post(self):
+        return Post.objects.all()
 
-    def post(self):
-        pass
+    def get_queryset_Comment(self):
+        return Comment.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        posts = self.serializer_class_Post(self.get_queryset_Post(), many=True)
+        comments = self.serializer_class_Comment(self.get_queryset_Comment(), many=True)
+        return Response({"posts": posts.data,
+                         "comments": comments.data
+                         })
 
 
 class SignUpView(View):
