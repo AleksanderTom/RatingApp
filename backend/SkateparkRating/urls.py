@@ -17,12 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from Rating.views import PostList, UserDashboard
+from Rating.views import PostList, UserDetailsList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('posts/', PostList.as_view()),
-    path('dashboard/', UserDashboard.as_view()),
+    path('users_details/', UserDetailsList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
