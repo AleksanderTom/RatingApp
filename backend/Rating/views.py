@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,20 +10,22 @@ from Rating.models import Post, UserProfile
 from Rating.serializers import PostSerializer, UserSerializer, UserProfileSerializer
 
 
-class UserList(APIView):
+class UserDashboard(ListAPIView):
+    serializer_class_User = UserSerializer
+    serializer_class_UserProfile = UserProfileSerializer
 
-    def get(self, request):
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+    def get_queryset_User(self):
+        return User.objects.all()
 
+    def get_queryset_UserProfile(self):
+        return UserProfile.objects.all()
 
-class UserProfileList(APIView):
-
-    def get(self, request):
-        user_profiles = UserProfile.objects.all()
-        serializer = UserProfileSerializer(user_profiles, many=True)
-        return Response(serializer.data)
+    def list(self, request, *args, **kwargs):
+        users = self.serializer_class_User(self.get_queryset_User(), many=True)
+        user_profiles = self.serializer_class_UserProfile(self.get_queryset_UserProfile(), many=True)
+        return Response({"users": users.data,
+                         "user_profiles": user_profiles.data
+                         })
 
 
 class PostList(APIView):
